@@ -1,0 +1,83 @@
+version: 2
+
+models:
+  - name: dim_listings
+    description: Dimension table containing details of rental property listings, including property type, pricing, and availability.
+    columns:
+      - name: listing_id
+        description: Unique identifier for each rental listing.
+        tests:
+          - unique
+          - not_null
+      - name: host_id
+        description: Identifier for the host managing this listing.
+      - name: property_type
+        description: Type of property (e.g., Apartment, House, Condo).
+      - name: room_type
+        description: Type of room being rented (e.g., Entire home/apt, Private room).
+      - name: price
+        description: Nightly rental price for the listing.
+      - name: availability_365
+        description: Total number of days the listing is available in a year.
+      - name: minimum_nights
+        description: Minimum number of nights required for booking.
+      - name: maximum_nights
+        description: Maximum number of nights required for booking.
+      - name: competitor_price
+        description: Average competitor price for similar properties in the same location.
+
+
+  - name: dim_customers
+    description: Dimension table containing customer demographics and booking behavior.
+    columns:
+      - name: customer_id
+        description: Unique identifier for each customer.
+        tests:
+          - unique
+          - not_null
+      - name: age_group
+        description: Age bracket of the customer (e.g., 18-25, 26-35, 36-50, 51+).
+      - name: travel_purpose
+        description: Primary reason for the customer's trip (e.g., Business, Leisure, Family Vacation).
+      - name: loyalty_status
+        description: Categorization of the customer’s engagement level (New, Frequent, VIP).
+
+  - name: dim_hosts
+    description: Dimension table containing host-related attributes.
+    columns:
+      - name: host_id
+        description: Unique identifier for each host.
+        tests:
+          - unique
+          - not_null
+      - name: host_name
+        description: Name of the host managing one or more properties.
+      - name: host_since
+        description: Date when the host first registered on the platform.
+      - name: host_listings_count
+        description: Total number of active listings managed by the host.
+
+  - name: dim_dates
+    description: Date dimension table for consistent date-based analysis across all fact tables.
+    columns:
+      - name: date_id
+        description: Unique surrogate key for each date.
+        tests:
+          - unique
+          - not_null
+      - name: full_date
+        description: "Full calendar date in YYYY-MM-DD format."
+      - name: is_weekend
+        description: Boolean flag indicating whether the date falls on a weekend (TRUE/FALSE).
+      - name: month
+        description: Numerical representation of the month (1-12).
+      - name: month_name
+        description: Full name of the month (e.g., January, February).
+      - name: quarter
+        description: Quarter of the year (1-4).
+      - name: year
+        description: Four-digit year (e.g., 2024).
+      - name: week_of_year
+        description: Week number of the year (1-53).
+      - name: season
+        description: Season corresponding to the date (e.g., Winter, Spring, Summer, Fall).

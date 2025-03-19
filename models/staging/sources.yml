@@ -1,0 +1,245 @@
+version: 2
+
+sources:
+  - name: rental
+    description: Source tables for the rental company project, extracted from the operational database.
+    schema: raw
+    tables:
+    
+      - name: listings
+        description: This table contains details about rental properties, including pricing, availability, host information, and property features. It serves as the primary reference for analyzing rental trends, pricing strategies, and occupancy rates.
+
+        columns:
+
+          - name: id
+            description: Unique identifier for each rental property.
+            tests:
+              - not_null
+              - unique 
+
+          - name: host_id
+            description: Unique identifier for the host managing the listing.
+            tests:
+              - not_null
+
+          - name: property_type
+            description: Type of property (e.g., Apartment, House, Condo, Villa).
+            tests:
+              - not_null
+
+          - name: room_type
+            description: Type of room available (Entire home, Private room, Shared room).
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['Entire home/apt', 'Private room', 'Shared room']
+
+          - name: price
+            description: Nightly rental price for the property.
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+              
+          - name: availability_365
+            description: Number of days the property is available for booking in a year.
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+
+          - name: minimum_nights
+            description: Minimum number of nights a guest can book this property.
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+
+          - name: maximum_nights
+            description: Maximum number of nights a guest can book this property.
+
+          - name: competitor_price
+            description: Estimated competitor pricing for similar properties in the same location.
+
+
+      - name: reviews
+        description: This table stores customer feedback on rental properties, including review dates, scores, and comments. It helps analyze customer satisfaction, identify high-performing listings, and track sentiment trends over time.
+        loaded_at_field: "CAST(date AS TIMESTAMP)"
+        freshness:
+          warn_after: {count: 3, period: day}
+          
+        columns:
+          - name: id
+            description: Unique identifier for each review.
+            tests:
+              - not_null
+              - unique
+
+          - name: listing_id
+            description: Identifier linking the review to a specific rental property.
+            tests:
+              - not_null
+              - relationships:
+                  to: source('rental', 'listings')
+                  field: id
+
+          - name: reviewer_id
+            description: Identifier linking the review to a specific customer.
+            tests:
+              - not_null
+              - relationships:
+                  to: source('rental', 'customers')
+                  field: customer_id
+
+          - name: date
+            description: Date the review was submitted.
+            tests:
+              - not_null
+
+          - name: reviewer_name
+            description: name of customer who gave review
+
+          - name: comments
+            description: Written feedback provided by the customer.
+
+     
+     
+      - name: bookings
+        description: This table records transactional data for rental reservations, capturing check-in and check-out dates, total price, and customer-booking relationships. It is essential for analyzing revenue, occupancy rates, booking trends, and seasonality effects.
+        columns:
+          - name: booking_id
+            description: Unique identifier for each rental booking.
+            tests:
+              - not_null
+              - unique
+
+          - name: listing_id
+            description: Identifier linking the booking to a specific property.
+            tests:
+              - not_null
+              - relationships:
+                  to: source('rental', 'listings')
+                  field: id
+
+          - name: customer_id
+            description: Identifier linking the booking to a specific customer.
+            tests:
+              - not_null
+              - relationships:
+                  to: source('rental', 'customers')
+                  field: customer_id
+              
+          - name: check_in
+            description: Date the guest checks into the rental property.
+            tests:
+              - not_null
+
+          - name: check_out
+            description: Date the guest checks out of the rental property.
+            tests:
+              - not_null
+             
+
+          - name: total_price
+            description: Total amount paid for the booking duration. 
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+              
+
+
+      - name: competitor_pricing
+        description: This table tracks the pricing of competing rental properties within the same geographic locations.
+        columns:
+
+          - name: listing_id
+            description: Identifier linking the competitor price data to a property.
+            tests:
+              - not_null
+              - unique
+              - relationships:
+                  to: source('rental', 'listings')
+                  field: id
+
+          - name: competitor_price
+            description: Average competitor price for similar properties in the same location.
+            tests:
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+
+
+      - name: customers
+        description: This table holds demographic and behavioral data about customers who book rentals. It includes customer segmentation attributes such as age group, travel purpose, and loyalty status, which are critical for targeted marketing and retention analysis.
+        columns:
+          - name: customer_id
+            description: Unique identifier for each customer.
+            tests:
+              - not_null
+              - unique
+
+          - name: age_group
+            description: Age category of the customer (e.g., 18-25, 26-35, etc.).
+            tests:
+              - not_null
+              - accepted_values :
+                  values: ['18-25', '26-35', '36-50', '51+']
+
+          - name: travel_purpose
+            description: Reason for the customer’s trip (e.g., Business, Leisure).
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['Business', 'Leisure', 'Family Vacation', 'Solo Travel']
+
+          - name: loyalty_status
+            description: Categorization of the customer’s engagement level (New, Frequent, VIP).
+
+
+      - name: events
+        description: This table tracks local events occurring near rental properties, such as concerts, sports games, and festivals. It provides an impact score indicating the effect of events on booking demand. This dataset supports surge pricing models and strategic property marketing.
+        columns:
+          - name: booking_id
+            description: Identifier linking the event data to a specific booking.
+            tests:
+              - not_null
+              - relationships:
+                  to: source('rental', 'bookings')
+                  field: booking_id
+
+          - name: event_type
+            description: Type of event occurring nearby (e.g., Concert, Festival).
+            tests:
+              - not_null
+
+          - name: event_impact
+            description: Score (0-1) estimating the impact of the event on rental demand.
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
+                  max_value: 1
+    
+
+      - name: maintenance
+        description: This table records maintenance requests and issues reported for rental properties. It includes issue type and resolution time. This dataset is used to track property upkeep, identify frequently maintained listings, and analyze how maintenance affects reviews and occupancy.
+        columns:
+          - name: listing_id
+            description: Identifier linking maintenance records to a property.
+            tests:
+              - not_null
+              - relationships:
+                  to: source('rental', 'listings')
+                  field: id
+
+          - name: issue_type
+            description: Type of maintenance issue (e.g., Plumbing, Electrical).
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['Plumbing', 'Electrical', 'Cleaning', 'General Repair']
+
+          - name: resolution_time
+            description: Time taken to resolve the issue (in hours).
+            tests:
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_between:
+                  min_value: 0
