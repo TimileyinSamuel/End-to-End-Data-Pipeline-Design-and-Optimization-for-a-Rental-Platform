@@ -9,28 +9,38 @@ models:
         tests:
           - unique
           - not_null
+
       - name: listing_id
         description: Foreign key linking to dim_listings.
         tests:
           - relationships:
               to: ref('dim_listings')
               field: listing_id
+
       - name: customer_id
         description: Foreign key linking to dim_customers.
         tests:
           - relationships:
               to: ref('dim_customers')
               field: customer_id
+
       - name: check_in
         description: Check-in date for the booking.
+
       - name: check_out
         description: Check-out date for the booking.
+
       - name: total_price
         description: Total amount paid for the booking duration.
+        tests:
+          - not_null
+
       - name: length_of_stay
         description: Number of nights between check-in and check-out.
+
       - name: revenue_per_night
         description: Total revenue divided by the length of stay.
+
       - name: is_checked_in
         description: Boolean flag indicating whether the guest has checked in (TRUE/FALSE).
 
@@ -42,22 +52,27 @@ models:
         tests:
           - unique
           - not_null
+          
       - name: listing_id
         description: Foreign key linking to dim_listings.
         tests:
           - relationships:
               to: ref('dim_listings')
               field: listing_id
+
       - name: reviewer_id
         description: Foreign key linking to dim_customers.
         tests:
           - relationships:
               to: ref('dim_customers')
               field: customer_id
+
       - name: review_date
         description: Date when the review was posted.
+
       - name: reviewer_name
         description: Name of the person who left the review.
+
       - name: comments
         description: Textual feedback provided by the customer.
 
@@ -70,8 +85,10 @@ models:
           - relationships:
               to: ref('dim_listings')
               field: listing_id
+
       - name: issue_type
         description: Category of maintenance issue (e.g., Plumbing, Electrical, Cleaning).
+
       - name: resolution_time
         description: Time taken to resolve the maintenance issue (in hours).
 
@@ -84,7 +101,9 @@ models:
           - relationships:
               to: ref('fact_bookings')
               field: booking_id
+
       - name: event_type
         description: Category of event impacting the booking (e.g., Concert, Festival).
+        
       - name: event_impact
         description: Numerical score representing the impact of the event on bookings.

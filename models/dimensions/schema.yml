@@ -56,6 +56,8 @@ models:
         description: Date when the host first registered on the platform.
       - name: host_listings_count
         description: Total number of active listings managed by the host.
+        tests:
+          - not_null
 
   - name: dim_dates
     description: Date dimension table for consistent date-based analysis across all fact tables.
@@ -69,6 +71,10 @@ models:
         description: "Full calendar date in YYYY-MM-DD format."
       - name: is_weekend
         description: Boolean flag indicating whether the date falls on a weekend (TRUE/FALSE).
+        tests:
+          - accepted_values:
+              values: ['TRUE', 'FALSE']
+
       - name: month
         description: Numerical representation of the month (1-12).
       - name: month_name
