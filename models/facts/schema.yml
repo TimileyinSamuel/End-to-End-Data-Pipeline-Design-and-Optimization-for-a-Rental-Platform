@@ -99,7 +99,7 @@ models:
         description: Foreign key linking to fact_bookings.
         tests:
           - relationships:
-              to: ref('fact_bookings')
+              to: ref('fct_bookings')
               field: booking_id
 
       - name: event_type

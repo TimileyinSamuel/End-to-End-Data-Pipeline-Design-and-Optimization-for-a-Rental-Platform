@@ -5,7 +5,7 @@
         target_schema = 'snapshots',
         strategy = 'check',
         unique_key = 'id',
-        check_cols = ['property type', 'room_type', 'price', 'availability_365', 'minimum_nights']
+        check_cols = ['property_type', 'room_type', 'price', 'availability_365', 'minimum_nights']
     )
 }}
 

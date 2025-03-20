@@ -1,9 +1,9 @@
 {{ 
     config(
         materialized = 'incremental',
-        unique_key = 'booking_id',
-        incremental_strategy = 'merge'
+        unique_key = 'event_id',
+        incremental_strategy = 'append'
     ) }}
 
-    SELECT *
-    FROM {{ ref('stg_events') }}
+    SELECT event_id, booking_id, event_type, event_impact
+    FROM {{ref ('stg_events') }}
