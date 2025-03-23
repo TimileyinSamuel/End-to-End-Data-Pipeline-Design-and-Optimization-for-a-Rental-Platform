@@ -64,7 +64,7 @@ sources:
         description: This table stores customer feedback on rental properties, including review dates, scores, and comments. It helps analyze customer satisfaction, identify high-performing listings, and track sentiment trends over time.
         loaded_at_field: "CAST(date AS TIMESTAMP)"
         freshness:
-          warn_after: {count: 3, period: day}
+          warn_after: {count: 24, period: hour}
           
         columns:
           - name: id
