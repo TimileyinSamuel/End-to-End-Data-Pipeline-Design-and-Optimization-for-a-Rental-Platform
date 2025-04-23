@@ -36,6 +36,8 @@ This project covers the full data journey, from ingestion to curated data marts 
 - **Events** – External occurrences like festivals or holidays that may impact bookings  
 - **Competitor Pricing** – Simulated data from similar listings in the market
 
+![image](https://github.com/user-attachments/assets/db6133b7-b62a-465d-942a-ae8264b9de2b)
+
 ---
 
 ## 🔄 Data Pipeline Workflow
@@ -49,6 +51,8 @@ This project covers the full data journey, from ingestion to curated data marts 
 3. **Data Marts Creation**  
    Final tables are optimized for reporting and business intelligence.
 
+![image](https://github.com/user-attachments/assets/d4daf4f8-57c2-4c7d-8944-0839dcbfc318)
+
 ---
 
 ## 📈 Data Marts
@@ -57,6 +61,8 @@ This project covers the full data journey, from ingestion to curated data marts 
 - **Customer Segmentation** – Identifies patterns in guest demographics and booking behavior  
 - **Operational Monitoring** – Tracks issue resolution times and service reliability  
 - **Pricing Optimization** – Analyzes the impact of competitor pricing and local events on performance
+
+![image](https://github.com/user-attachments/assets/a3bfadd8-fabf-4446-afee-812e40a75167)
 
 ---
 
